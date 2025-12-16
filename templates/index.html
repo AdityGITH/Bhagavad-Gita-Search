@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhagavad Gita Search</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .search-type {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .search-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .result-count {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .verse-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .verse-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .verse-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .chapter {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .verse-number {
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .verse-text {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .verse-meaning {
+            color: #555;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .no-results {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            color: #999;
+            font-size: 1.1em;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .search-type {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .search-input {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🕉️ Bhagavad Gita Search</h1>
+            <p class="subtitle">Discover the timeless wisdom</p>
+        </header>
+
+        <div class="search-box">
+            <div class="search-type">
+                <div class="radio-option">
+                    <input type="radio" id="verse-radio" name="searchType" value="verse" checked>
+                    <label for="verse-radio">Search by Verse Number</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="text-radio" name="searchType" value="text">
+                    <label for="text-radio">Search by Text</label>
+                </div>
+            </div>
+
+            <div class="search-input">
+                <input type="text" id="searchQuery" placeholder="Enter verse number (e.g., 1.1) or search text...">
+                <button onclick="performSearch()">Search</button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">Searching...</div>
+        
+        <div class="results" id="results">
+            <div class="result-count" id="resultCount"></div>
+            <div id="resultsList"></div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchQuery');
+        const resultsDiv = document.getElementById('results');
+        const resultsList = document.getElementById('resultsList');
+        const resultCount = document.getElementById('resultCount');
+        const loading = document.getElementById('loading');
+
+        // Update placeholder based on search type
+        document.querySelectorAll('input[name="searchType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'verse') {
+                    searchInput.placeholder = 'Enter verse number (e.g., 1.1)';
+                } else {
+                    searchInput.placeholder = 'Enter search text (e.g., Arjuna, dharma, battlefield)';
+                }
+            });
+        });
+
+        // Search on Enter key
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // Real-time search with debounce
+        let debounceTimer;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                performSearch();
+            }, 300); // 300ms delay
+        });
+
+        async function performSearch() {
+            const query = searchInput.value.trim();
+            if (!query) {
+                resultsDiv.classList.remove('show');
+                loading.classList.remove('show');
+                return;
+            }
+
+            const searchType = document.querySelector('input[name="searchType"]:checked').value;
+            
+            // Show loading
+            loading.classList.add('show');
+            resultsDiv.classList.remove('show');
+
+            try {
+                const response = await fetch(`/search?type=${searchType}&query=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                // Hide loading
+                loading.classList.remove('show');
+
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                displayResults(data);
+            } catch (error) {
+                loading.classList.remove('show');
+                alert('Error performing search. Please try again.');
+                console.error(error);
+            }
+        }
+
+        function displayResults(data) {
+            resultsList.innerHTML = '';
+            
+            if (data.length === 0) {
+                resultsList.innerHTML = '<div class="no-results">No verses found. Try a different search term.</div>';
+                resultCount.textContent = '';
+            } else {
+                resultCount.textContent = `Found ${data.length} verse${data.length > 1 ? 's' : ''}`;
+                
+                data.forEach(verse => {
+                    const card = document.createElement('div');
+                    card.className = 'verse-card';
+                    card.innerHTML = `
+                        <div class="verse-header">
+                            <span class="chapter">${verse.Chapters}</span>
+                            <span class="verse-number">${verse.Verse_Number}</span>
+                        </div>
+                        <div class="verse-text">${verse.Verse}</div>
+                        <div class="verse-meaning">${verse.Verse_Meaning}</div>
+                    `;
+                    resultsList.appendChild(card);
+                });
+            }
+
+            resultsDiv.classList.add('show');
+            
+            // Smooth scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>
